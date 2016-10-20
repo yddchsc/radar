@@ -19,7 +19,7 @@
     <!-- SD卡读取权限，用户写入离线定位数据-->
     <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS"/>
     <uses-permission android:name="android.permission.RECEIVE_SMS"/><!-- 接收短信权限 -->
-    <uses-permission android:name="android.permission.INTERNET"/><!-- 网络访问权限 -->
+    <uses-permission android:name="android.permission.SEND_SMS"/>
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -29,7 +29,8 @@
             android:name="com.baidu.lbsapi.API_KEY"
             android:value="ceWIiIFGuR5zq0ZzpSiS2KTElVBiAAER" />
         <activity
-            android:name=".MainActivity">
+            android:name=".MainActivity"
+            android:launchMode="singleInstance">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -41,10 +42,15 @@
         <activity
             android:name=".friendDetailActivity">
         </activity>
+        <receiver android:name=".SMSBroadcastReceiver">
+            <intent-filter android:priority="1000">    <!-- 优先级设为1000，最高 -->
+                <action android:name="android.provider.Telephony.SMS_RECEIVED"/>
+            </intent-filter>
+        </receiver>
+        <service
+            android:name="com.baidu.location.f"
+            android:enabled="true"
+            android:process=":remote">
+        </service>
     </application>
-    <service
-        android:name="com.baidu.location.f"
-        android:enabled="true"
-        android:process=":remote">
-    </service>
 </manifest>
