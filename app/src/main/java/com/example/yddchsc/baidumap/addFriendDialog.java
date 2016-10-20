@@ -8,13 +8,13 @@ import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
 
-public class CustomDialog extends Dialog {
+public class addFriendDialog extends Dialog {
 
-    public CustomDialog(Context context) {
+    public addFriendDialog(Context context) {
         super(context);
     }
 
-    /*public CustomDialog(Context context, int theme) {
+    /*public addFriendDialog(Context context, int theme) {
         super(context, theme);
     }*/
 
@@ -22,7 +22,7 @@ public class CustomDialog extends Dialog {
         private Context context;
         private String positiveButtonText;
         private String negativeButtonText;
-        private View contentView;
+        public View layout;
         private DialogInterface.OnClickListener positiveButtonClickListener;
         private DialogInterface.OnClickListener negativeButtonClickListener;
 
@@ -30,31 +30,10 @@ public class CustomDialog extends Dialog {
             this.context = context;
         }
 
-        public Builder setContentView(View v) {
-            this.contentView = v;
-            return this;
-        }
-
-        public Builder setPositiveButton(int positiveButtonText,
-                                         DialogInterface.OnClickListener listener) {
-            this.positiveButtonText = (String) context
-                    .getText(positiveButtonText);
-            this.positiveButtonClickListener = listener;
-            return this;
-        }
-
         public Builder setPositiveButton(String positiveButtonText,
                                          DialogInterface.OnClickListener listener) {
             this.positiveButtonText = positiveButtonText;
             this.positiveButtonClickListener = listener;
-            return this;
-        }
-
-        public Builder setNegativeButton(int negativeButtonText,
-                                         DialogInterface.OnClickListener listener) {
-            this.negativeButtonText = (String) context
-                    .getText(negativeButtonText);
-            this.negativeButtonClickListener = listener;
             return this;
         }
 
@@ -65,12 +44,12 @@ public class CustomDialog extends Dialog {
             return this;
         }
 
-        public CustomDialog create() {
+        public addFriendDialog create() {
             LayoutInflater inflater = (LayoutInflater) context
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             // instantiate the dialog with the custom Theme
-            final CustomDialog dialog = new CustomDialog(context);
-            View layout = inflater.inflate(R.layout.dialog_add_friend, null);
+            final addFriendDialog dialog = new addFriendDialog(context);
+            layout = inflater.inflate(R.layout.dialog_add_friend, null);
             dialog.addContentView(layout, new LayoutParams(
                     LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
             // set the dialog title

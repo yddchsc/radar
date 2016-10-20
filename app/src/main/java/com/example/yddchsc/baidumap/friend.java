@@ -1,23 +1,20 @@
 package com.example.yddchsc.baidumap;
 
-import android.graphics.Bitmap;
-
 import java.io.Serializable;
 
 public class friend implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private int type;          //类型
-    private String text1 ;       //文本信息
-    private String text2 ;
-    private String text3 ;
+    private int type = 1;          //类型
+    private String name ;       //文本信息
+    private String number ;
+    private String long_lang ;
     private String text4 ;
 
     public friend(){
     }
 
-    //三个get方法和三个set方法
     public int getType(){
         return  type ;
     }
@@ -28,28 +25,28 @@ public class friend implements Serializable {
 
     public String getText(String i){
         switch (i){
-            case "week":
-                return text1;
-            case "day":
-                return text2;
-            case "content":
-                return text3;
+            case "name":
+                return name;
+            case "number":
+                return number;
+            case "long_lang":
+                return long_lang;
             case "date":
                 return text4;
         }
-        return text1;
+        return name;
     }
 
     public void setText(String i,String text){
         switch (i){
-            case "week":
-                this.text1=text;
+            case "name":
+                this.name=text;
                 break;
-            case "day":
-                this.text2=text;
+            case "number":
+                this.number=text;
                 break;
-            case "content":
-                this.text3=text;
+            case "long_lang":
+                this.long_lang=text;
                 break;
             case "date":
                 this.text4=text;

@@ -52,7 +52,7 @@ class ListViewAdapter extends BaseAdapter {
     /**
      * ListView Item设置
      */
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
         //自定义视图
         ListItemView  listItemView = null;
         if (convertView != null) {
@@ -66,20 +66,18 @@ class ListViewAdapter extends BaseAdapter {
 
         //获取控件对象
         listItemView.name_cell = (TextView) convertView.findViewById(R.id.name_cell);
+        listItemView.name_cell.setText(listItems.get(position).getText("name"));
         listItemView.delete_button_cell = (Button) convertView.findViewById(R.id.delete_button_cell);
         //设置控件集到convertView
         convertView.setTag(listItemView);
 
-        //注册按钮点击时间爱你
-       /* listItemView.content.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });*/
         listItemView.delete_button_cell.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-
+                listItems.remove(position);
+                File file = new File(context);
+                file.saveObject("friends.dat",listItems);
+                listItems = (List<friend>) file.getObject("friends.dat");
+                notifyDataSetChanged();
             }
         });
         return convertView;
