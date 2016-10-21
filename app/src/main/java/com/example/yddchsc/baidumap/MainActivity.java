@@ -21,10 +21,13 @@ import com.baidu.mapapi.map.MapStatus;
 import com.baidu.mapapi.map.MapStatusUpdateFactory;
 import com.baidu.mapapi.map.MarkerOptions;
 import com.baidu.mapapi.map.MyLocationData;
+import com.baidu.mapapi.map.Overlay;
 import com.baidu.mapapi.map.OverlayOptions;
+import com.baidu.mapapi.map.PolylineOptions;
 import com.baidu.mapapi.map.TextureMapView;
 import com.baidu.mapapi.model.LatLng;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -32,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
     Button friends;
 
     private ToggleButton refresh;
-    public static String long_lang;
+    public static String long_lang = "0.000/0.0";
 
     LocationClient mLocClient;
     public static BaiduMap mBaiduMap;
@@ -52,34 +55,16 @@ public class MainActivity extends AppCompatActivity {
         // 开启定位图层
         mBaiduMap.setMyLocationEnabled(true);
         // 定位初始化
-        mLocClient = new LocationClient(this);
+        mLocClient = new LocationClient(getApplicationContext());
         mLocClient.registerLocationListener(myListener);
         LocationClientOption option = new LocationClientOption();
+
         option.setOpenGps(true); // 打开gps
         option.setCoorType("bd09ll"); // 设置坐标类型
         option.setScanSpan(1000);
+
         mLocClient.setLocOption(option);
         mLocClient.start();
-
-        File file = new File(MainActivity.this);
-        List<friend> datas = (List<friend>) file.getObject("friends.dat");  //因为一条短信有字数限制，因此要将长短信拆分
-        for(friend bean:datas){
-            if(bean.getText("long_lang")!=null) {
-                String loc[] = bean.getText("long_lang").split("/");
-                //定义Maker坐标点
-                LatLng point = new LatLng(Double.parseDouble(loc[0]),Double.parseDouble(loc[1]));
-                //构建Marker图标
-                BitmapDescriptor bitmap = BitmapDescriptorFactory.fromResource(R.drawable.friend_marker);
-                //构建MarkerOption，用于在地图上添加Marker
-                OverlayOptions option0 = new MarkerOptions()
-                        .position(point)
-                        .icon(bitmap);
-                //在地图上添加Marker，并显示
-                mBaiduMap.addOverlay(option0);
-            }
-        }
-
-        long_lang = myListener.long_lan;
 
         friends = (Button) findViewById(R.id.btn_friends);
         friends.setOnClickListener(new View.OnClickListener() {
@@ -104,6 +89,52 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+    private void addmaker(){
+        File file = new File(MainActivity.this);
+        List<friend> datas = (List<friend>) file.getObject("friends.dat");  //因为一条短信有字数限制，因此要将长短信拆分
+        for(friend bean:datas){
+            if(bean.getText("long_lang")!=null) {
+                String loc[] = bean.getText("long_lang").split("/");
+                //定义Maker坐标点
+                LatLng p1 = new LatLng(Double.parseDouble(loc[0]),Double.parseDouble(loc[1]));
+                //构建Marker图标
+                BitmapDescriptor bitmap = BitmapDescriptorFactory.fromResource(R.drawable.friend_marker);
+                //构建MarkerOption，用于在地图上添加Marker
+                OverlayOptions option0 = new MarkerOptions().position(p1).icon(bitmap);
+                //在地图上添加Marker，并显示
+                mBaiduMap.addOverlay(option0);
+
+                String loc1[] = long_lang.split("/");
+
+                Double lan = Double.parseDouble(loc1[0]);
+                Double lon = Double.parseDouble(loc1[1]);
+
+                LatLng p2 = new LatLng(lan,lon);
+                List<LatLng> points = new ArrayList<LatLng>();
+                points.add(p1);
+                points.add(p2);
+                OverlayOptions ooPolyline = new PolylineOptions().width(5).color(0xAAFF0000).points(points);
+                mBaiduMap.addOverlay(ooPolyline);
+
+                //double cc= Distance(Double.parseDouble(loc[0]),Double.parseDouble(loc[1]),Double.parseDouble(loc1[0]),Double.parseDouble(loc1[1]));
+            }
+        }
+    }
+
+    public Double Distance(double lat1, double lng1,double lat2, double lng2) {
+
+        Double R = 6370996.81;  //地球的半径
+        /*
+         * 获取两点间x,y轴之间的距离
+         */
+        Double x = (lng2 - lng1)*Math.PI*R*Math.cos(((lat1+lat2)/2)*Math.PI/180)/180;
+        Double y = (lat2 - lat1)*Math.PI*R/180;
+
+        Double distance = Math.hypot(x, y);   //得到两点之间的直线距离
+
+        return   distance;
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -124,15 +155,18 @@ public class MainActivity extends AppCompatActivity {
     }
     public class MyLocationListenner implements BDLocationListener {
 
-        public String long_lan;
-
         @Override
         public void onReceiveLocation(BDLocation location) {
 
-            long_lang = Double.toString(location.getLatitude()) + "/" + Double.toString(location.getLongitude());
             // map view 销毁后不在处理新接收的位置
             if (location == null || mMapView == null) {
                 return;
+            }
+            if (long_lang != Double.toString(location.getLatitude()) + "/" + Double.toString(location.getLongitude()))
+            {
+                long_lang = Double.toString(location.getLatitude()) + "/" + Double.toString(location.getLongitude());
+                mBaiduMap.clear();
+                addmaker();
             }
             MyLocationData locData = new MyLocationData.Builder()
                     .accuracy(location.getRadius())

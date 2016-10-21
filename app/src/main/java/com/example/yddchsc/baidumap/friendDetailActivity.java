@@ -30,7 +30,7 @@ public class friendDetailActivity extends Activity {
         name.setText(bean.getText("name"));
 
         number = (TextView) findViewById(R.id.txt_friend_number);
-        number.setText(bean.getText("name"));
+        number.setText(bean.getText("number"));
 
         long_lang = (TextView) findViewById(R.id.txt_friend_long_lang);
         long_lang.setText(bean.getText("long_lang"));
